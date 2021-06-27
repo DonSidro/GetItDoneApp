@@ -8,18 +8,18 @@ import java.io.Serializable
 data class Note(
 
     @PrimaryKey (autoGenerate = true)
-    val id: Int = 0,
+    var id: Int = 0,
 
     var title: String? = null,
     var subTitle: String? = null,
     var body: String? = null,
     var dateTime: String? = null,
-    val imagePath: String? = null,
+    var imagePath: String? = null,
     var color: String? = null,
-    val webLink: String? = null
+    var webLink: String? = null
 
 
 
 
 
-)
+) : Serializable
