@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:background="@color/colorPrimary"
     android:layout_height="match_parent"
-    tools:context=".CreateNoteActivity">
+    tools:context=".activities.CreateNoteActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -147,7 +147,8 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     </ScrollView>
+
+    <include android:id="@+id/layoutMiscellaneous" layout="@layout/layout_miscellaneous" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
