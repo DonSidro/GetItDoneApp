@@ -16,7 +16,8 @@ data class Note(
     var dateTime: String? = null,
     var imagePath: String? = null,
     var color: String? = null,
-    var webLink: String? = null
+    var webLink: String? = null,
+    var position: Int? = id
 
 
 

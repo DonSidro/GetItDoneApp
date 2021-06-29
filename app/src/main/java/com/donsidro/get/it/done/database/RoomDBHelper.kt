@@ -19,6 +19,11 @@ class RoomDBHelper {
          noteDao.insertNote(note)
     }
 
+    fun roomUpdateNote(applicationContext: Context,note: Note){
+        val noteDao = NotesDatabase.getInstance(applicationContext.applicationContext)
+        noteDao.update(note)
+    }
+
      fun roomDeleteNote(applicationContext: Context, note: Note){
         val noteDao = NotesDatabase.getInstance(applicationContext.applicationContext)
          noteDao.deleteNote(note)

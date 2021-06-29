@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.donsidro.get.it.done.R
-import com.donsidro.get.it.done.databinding.ActivityMainBinding
 import com.donsidro.get.it.done.databinding.ItemConainerNoteBinding
 import com.donsidro.get.it.done.listeners.NotesListener
 import com.donsidro.get.it.done.modules.Note
@@ -35,30 +33,27 @@ class NoteAdapter (private val dataSet: List<Note>, val notesListener: NotesList
 
     inner class ViewHolder(private val binding: ItemConainerNoteBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Note) {
-            with(binding) {
-                binding.textTitle.text = item.title
-                if(item.subTitle.toString().trim().isEmpty()){
-                    binding.textSubtitle.visibility = View.GONE
-                }else{
-                    binding.textSubtitle.text = item.subTitle
-                }
-                binding.textDateTime.text = item.dateTime
+            binding.textTitle.text = item.title
+            if(item.subTitle.toString().trim().isEmpty()){
+                binding.textSubtitle.visibility = View.GONE
+            }else{
+                binding.textSubtitle.text = item.subTitle
+            }
+            binding.textDateTime.text = item.dateTime
 
 
-                var gradientDrawable = binding.layoutNote.background as GradientDrawable
-                if(item.color != null){
-                    gradientDrawable.setColor(Color.parseColor(item.color))
-                }else{
-                    gradientDrawable.setColor(Color.parseColor("#333333"))
-                }
+            var gradientDrawable = binding.layoutNote.background as GradientDrawable
+            if(item.color != null){
+                gradientDrawable.setColor(Color.parseColor(item.color))
+            }else{
+                gradientDrawable.setColor(Color.parseColor("#333333"))
+            }
 
-                if(item.imagePath != null) {
-                    binding.imageNote.setImageBitmap(BitmapFactory.decodeFile(item.imagePath))
-                    binding.imageNote.visibility = View.VISIBLE
-                }else{
-                    binding.imageNote.visibility = View.GONE
-                }
-
+            if(item.imagePath != null) {
+                binding.imageNote.setImageBitmap(BitmapFactory.decodeFile(item.imagePath))
+                binding.imageNote.visibility = View.VISIBLE
+            }else{
+                binding.imageNote.visibility = View.GONE
             }
 
         }
@@ -67,6 +62,10 @@ class NoteAdapter (private val dataSet: List<Note>, val notesListener: NotesList
                 notesListener.onNoteClicked(item, position)
             }
         }
+    }
+
+    fun getItemDBID(position: Int) : Int{
+        return dataSet[position].id
     }
 
 
