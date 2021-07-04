@@ -1,49 +1,50 @@
-package com.donsidro.get.it.done.activities
+package com.donsidro.get.it.done.ui.notesdetails
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.graphics.Color.parseColor
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Patterns
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.donsidro.get.it.done.R
-import com.donsidro.get.it.done.database.RoomDBHelper
-import com.donsidro.get.it.done.databinding.ActivityCreateNoteBinding
-import com.donsidro.get.it.done.databinding.ActivityMainBinding
-import com.donsidro.get.it.done.modules.Note
+import com.donsidro.get.it.done.data.entities.Note
+import com.donsidro.get.it.done.databinding.CreateNoteFragmentBinding
+import com.donsidro.get.it.done.utils.autoCleared
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CreateNoteActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityCreateNoteBinding
+@AndroidEntryPoint
+class NotesDetailFragment : Fragment() {
+
+    private var binding: CreateNoteFragmentBinding by autoCleared()
+    private val viewModel: NoteDetailViewModel by viewModels()
 
     private var selectedColor: String = "#333333"
     private var selectedImagePath : String = ""
     private var editNote: Note? = null
-
 
     private val resultContract = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result: ActivityResult ->
 
@@ -51,7 +52,7 @@ class CreateNoteActivity : AppCompatActivity() {
             val imageUri = result.data?.data
 
             if(imageUri != null){
-                val inputStream = contentResolver.openInputStream(imageUri)
+                val inputStream = activity?.contentResolver?.openInputStream(imageUri)
                 var bitmap = BitmapFactory.decodeStream(inputStream)
                 binding.imageNote.setImageBitmap(bitmap)
                 binding.imageNote.visibility = View.VISIBLE
@@ -61,32 +62,30 @@ class CreateNoteActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityCreateNoteBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
-
-        binding.imageBack.setOnClickListener{
-            onBackPressed()
-        }
-
-        binding.textDateTime.text = SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date())
-
-        binding.imageDone.setOnClickListener {
-            saveNote()
-        }
-
-
-        if(intent.getBooleanExtra("isViewOrUpdate", false)){
-            editNote = intent.getSerializableExtra("note") as Note?
-            setupViewOrEditNote();
-        }
-
-        initMiscellaneous()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = CreateNoteFragmentBinding.inflate(inflater, container, false)
+        setHasOptionsMenu(true);
+        return binding.root
     }
 
-    private fun setupViewOrEditNote(){
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        arguments?.getInt("id")?.let { viewModel.start(it) }
+        setupViews()
+        setupObservers()
+    }
+
+    private fun setupObservers() {
+        viewModel.note.observe(viewLifecycleOwner, {
+            bindNote(it)
+        })
+    }
+
+    private fun bindNote(editNote: Note){
+        this.editNote = editNote
         binding.inputNote.setText(editNote?.body)
         binding.inputNoteSubtitle.setText(editNote?.subTitle)
         binding.inputNoteTitle.setText(editNote?.title)
@@ -105,9 +104,61 @@ class CreateNoteActivity : AppCompatActivity() {
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.clear()
+        inflater.inflate(R.menu.toolbar_details_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        val mSaveMenuItem = menu.findItem(R.id.menu_done)
+
+        mSaveMenuItem.setOnMenuItemClickListener {
+            saveNote()
+            activity?.onBackPressed()
+            return@setOnMenuItemClickListener false
+        }
+        super.onPrepareOptionsMenu(menu)
+    }
+
+    private fun saveNote(){
+            if (binding.inputNoteTitle.text.toString().trim().isEmpty()){
+                Toast.makeText(activity, "Note title can't be empty!", Toast.LENGTH_SHORT).show()
+                return
+            }else if (binding.inputNoteSubtitle.text.toString().trim().isEmpty() &&
+                binding.inputNote.text.toString().trim().isEmpty()){
+                Toast.makeText(activity, "Note can't be empty!", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            var note = Note()
+            note.title = binding.inputNoteTitle.text.toString()
+            note.subTitle = binding.inputNoteSubtitle.text.toString()
+            note.body = binding.inputNote.text.toString()
+            note.dateTime = binding.textDateTime.text.toString()
+            note.color = selectedColor
+            note.imagePath = selectedImagePath
+            if (binding.layoutWebURL.visibility == View.VISIBLE)
+                note.webLink = binding.textWebURL.text.toString()
+
+            if(editNote != null){
+                note.id = editNote!!.id
+            }
+
+            viewModel.saveNote(note)
+
+    }
+
+    private fun setupViews(){
+        binding.textDateTime.text = SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date())
+        initMiscellaneous()
+
+    }
+
+
     private fun getPathFromUri(uri: Uri) : String{
         var filePath : String = ""
-        var cursor = contentResolver.query(uri, null, null, null,null)
+        var cursor = activity?.contentResolver?.query(uri, null, null, null,null)
         if(cursor == null){
             filePath = uri.path.toString()
         }else{
@@ -117,42 +168,6 @@ class CreateNoteActivity : AppCompatActivity() {
             cursor.close()
         }
         return filePath
-    }
-
-    private fun saveNote(){
-        if (binding.inputNoteTitle.text.toString().trim().isEmpty()){
-            Toast.makeText(this, "Note title can't be empty!", Toast.LENGTH_SHORT).show()
-            return
-        }else if (binding.inputNoteSubtitle.text.toString().trim().isEmpty() &&
-                binding.inputNote.text.toString().trim().isEmpty()){
-            Toast.makeText(this, "Note can't be empty!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        var note = Note()
-        note.title = binding.inputNoteTitle.text.toString()
-        note.subTitle = binding.inputNoteSubtitle.text.toString()
-        note.body = binding.inputNote.text.toString()
-        note.dateTime = binding.textDateTime.text.toString()
-        note.color = selectedColor
-        note.imagePath = selectedImagePath
-        if (binding.layoutWebURL.visibility == View.VISIBLE)
-        note.webLink = binding.textWebURL.text.toString()
-
-        if(editNote != null){
-            note.id = editNote!!.id
-        }
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                RoomDBHelper.instance.roomInsertNote(this@CreateNoteActivity, note)
-                setResult(RESULT_OK, Intent())
-                finish()
-            }catch (e: Exception){
-                e.printStackTrace()
-            }
-        }
-
     }
 
     private fun initMiscellaneous(){
@@ -242,10 +257,12 @@ class CreateNoteActivity : AppCompatActivity() {
             val bottomSheetBehavior = BottomSheetBehavior.from(binding.layoutMiscellaneous.layoutMiscellaneous)
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             when (PackageManager.PERMISSION_GRANTED) {
-                ContextCompat.checkSelfPermission(
-                    applicationContext,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) -> {
+                activity?.let { it1 ->
+                    ContextCompat.checkSelfPermission(
+                        it1.applicationContext,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    )
+                } -> {
                     selectImage();
                 }
                 else -> {
@@ -271,14 +288,15 @@ class CreateNoteActivity : AppCompatActivity() {
     }
 
     private fun showAddURLDialog(){
-        var builder = AlertDialog.Builder(this)
-        var view = LayoutInflater.from(this).inflate(R.layout.layout_add_url, findViewById(R.id.layoutAddUrlContainer))
 
-        builder.setView(view)
+        var builder = AlertDialog.Builder(activity)
+        var view = LayoutInflater.from(activity).inflate(R.layout.layout_add_url, activity?.findViewById(R.id.layoutAddUrlContainer))
 
-        var alert = builder.create()
+        builder?.setView(view)
 
-        if(alert.window != null){
+        var alert = builder?.create()
+
+        if(alert?.window != null){
             alert.window!!.setBackgroundDrawable(ColorDrawable(0))
         }
         var inputURL = view.findViewById<EditText>(R.id.inputURL)
@@ -286,21 +304,21 @@ class CreateNoteActivity : AppCompatActivity() {
 
         view.findViewById<TextView>(R.id.textAdd).setOnClickListener {
             if(inputURL.text.toString().trim().isEmpty()){
-                Toast.makeText(this, "Enter URL", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Enter URL", Toast.LENGTH_SHORT).show()
             }else if(!Patterns.WEB_URL.matcher(inputURL.text.toString()).matches()){
-                Toast.makeText(this, "Enter valid URL", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Enter valid URL", Toast.LENGTH_SHORT).show()
             }else{
                 binding.textWebURL.text = inputURL.text
                 binding.layoutWebURL.visibility = View.VISIBLE
-                alert.dismiss()
+                alert?.dismiss()
             }
         }
 
         view.findViewById<TextView>(R.id.textCancel).setOnClickListener {
-            alert.dismiss()
+            alert?.dismiss()
         }
 
-        alert.show()
+        alert?.show()
     }
 
 
@@ -311,8 +329,10 @@ class CreateNoteActivity : AppCompatActivity() {
             if (isGranted) {
                 selectImage()
             } else {
-                Toast.makeText(this,"Permission Denied!",Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity,"Permission Denied!",Toast.LENGTH_SHORT).show()
             }
         }
+
+
 
 }

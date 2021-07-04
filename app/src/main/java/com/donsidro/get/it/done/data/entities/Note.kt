@@ -1,10 +1,10 @@
-package com.donsidro.get.it.done.modules
+package com.donsidro.get.it.done.data.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
-@Entity (tableName = "notes")
+@Entity (tableName = "note_table")
 data class Note(
 
     @PrimaryKey (autoGenerate = true)
@@ -14,13 +14,13 @@ data class Note(
     var subTitle: String? = null,
     var body: String? = null,
     var dateTime: String? = null,
-    var imagePath: String? = null,
+    var imagePath: String? = "",
     var color: String? = null,
-    var webLink: String? = null,
+    var webLink: String? = "",
     var position: Int? = id
 
 
 
 
 
-) : Serializable
+)

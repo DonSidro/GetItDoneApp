@@ -25,12 +25,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:fontFamily="@font/ubuntu_bold"
         android:includeFontPadding="false"
         android:textColor="@color/colorWhite"
-        android:textSize="13sp"/>
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/textSubtitle"
@@ -38,13 +38,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
         android:fontFamily="@font/ubuntu"
         android:includeFontPadding="false"
         android:textColor="@color/colorNoteSubtitleText"
-        android:textSize="11sp"/>
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/textDateTime"
@@ -57,7 +57,7 @@
         android:fontFamily="@font/ubuntu"
         android:includeFontPadding="false"
         android:textColor="@color/colorNoteSubtitleText"
-        android:textSize="7sp"/>
+        android:textSize="10sp" />
 
 
 </LinearLayout>
