@@ -6,10 +6,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import com.donsidro.get.it.done.data.entities.Note
+import com.donsidro.get.it.done.data.entities.User
+import com.donsidro.get.it.done.data.repository.FirebaseRepository
 import com.donsidro.get.it.done.data.repository.NoteRepository
+import com.donsidro.get.it.done.utils.Resource
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.firebase.auth.FirebaseAuth
 
 class NoteDetailViewModel @ViewModelInject constructor(
     private val repository: NoteRepository
+
 ): ViewModel() {
 
     private val _id = MutableLiveData<Int>()
@@ -27,4 +33,5 @@ class NoteDetailViewModel @ViewModelInject constructor(
     fun saveNote(note: Note) {
         repository.insertNote(note)
     }
+
 }

@@ -9,11 +9,10 @@
     android:layout_height="wrap_content"
     android:focusable="true">
 
-    <com.makeramen.roundedimageview.RoundedImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageNote"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:adjustViewBounds="true"
         android:src="@drawable/ic_baseline_account_circle_24" />
 
 </FrameLayout>

@@ -30,10 +30,13 @@ import com.donsidro.get.it.done.R
 import com.donsidro.get.it.done.data.entities.Note
 import com.donsidro.get.it.done.databinding.CreateNoteFragmentBinding
 import com.donsidro.get.it.done.utils.autoCleared
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -41,6 +44,9 @@ class NotesDetailFragment : Fragment() {
 
     private var binding: CreateNoteFragmentBinding by autoCleared()
     private val viewModel: NoteDetailViewModel by viewModels()
+
+    @Inject
+    lateinit var fAuth: FirebaseAuth
 
     private var selectedColor: String = "#333333"
     private var selectedImagePath : String = ""
