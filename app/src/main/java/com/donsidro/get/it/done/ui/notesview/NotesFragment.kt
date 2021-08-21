@@ -20,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.donsidro.get.it.done.R
+import com.donsidro.get.it.done.data.entities.Note
 import com.donsidro.get.it.done.databinding.NotesFragmentBinding
 import com.donsidro.get.it.done.ui.MainActivity
 import com.donsidro.get.it.done.utils.OnSwipeTouchListener
@@ -31,6 +32,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
@@ -49,6 +51,9 @@ class NotesFragment : Fragment(), NotesAdapter.NotesItemListener {
 
     @Inject
     lateinit var googleSignInClient: GoogleSignInClient
+
+    @Inject
+    lateinit var firebaseFirestore: FirebaseFirestore
 
     @Inject
     lateinit var fAuth: FirebaseAuth
@@ -183,6 +188,29 @@ class NotesFragment : Fragment(), NotesAdapter.NotesItemListener {
                     if (it.status == Status.SUCCESS) {
                         var imageView =  profileView.findViewById<CircleImageView>(R.id.imageNote)
                         activity?.let { it1 -> Glide.with(it1.applicationContext).asBitmap().load(fAuth!!.currentUser?.photoUrl).into(imageView) }
+                        firebaseFirestore.collection("Users").document(fAuth.uid.toString())
+                            .collection("Notes").get()
+                            .addOnSuccessListener { doc->
+                                for (d in doc){
+                                    if (d != null) {
+                                        viewModel.saveNote(
+                                            Note(
+                                                0,
+                                                d.data.getValue("title").toString(),
+                                                d.data.getValue("subTitle").toString(),
+                                                d.data.getValue("body").toString(),
+                                                d.data.getValue("dateTime").toString(),
+                                                d.data.getValue("imagePath").toString(),
+                                                d.data.getValue("color").toString(),
+                                                d.data.getValue("webLink").toString(),
+                                                d.data.getValue("randomFirebaseID").toString()
+                                            )
+                                        )
+                                        Log.d(TAG, "d: " + d.data)
+                                    }
+                                }
+                            }
+
                     } else if (it.status == Status.ERROR) {
 
                     }

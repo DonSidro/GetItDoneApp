@@ -33,6 +33,7 @@ import com.donsidro.get.it.done.utils.autoCleared
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
@@ -47,6 +48,8 @@ class NotesDetailFragment : Fragment() {
 
     @Inject
     lateinit var fAuth: FirebaseAuth
+    @Inject
+    lateinit var firebaseFirestore: FirebaseFirestore
 
     private var selectedColor: String = "#333333"
     private var selectedImagePath : String = ""
@@ -144,6 +147,7 @@ class NotesDetailFragment : Fragment() {
             note.dateTime = binding.textDateTime.text.toString()
             note.color = selectedColor
             note.imagePath = selectedImagePath
+            note.randomFirebaseID = randomID()
             if (binding.layoutWebURL.visibility == View.VISIBLE)
                 note.webLink = binding.textWebURL.text.toString()
 
@@ -151,9 +155,17 @@ class NotesDetailFragment : Fragment() {
                 note.id = editNote!!.id
             }
 
+            firebaseFirestore.collection("Users").document(fAuth.uid.toString())
+                .collection("Notes")
+                .document(note.randomFirebaseID.toString()).set(note)
+
             viewModel.saveNote(note)
 
     }
+
+    private fun randomID(): String = List(16) {
+        (('a'..'z') + ('A'..'Z') + ('0'..'9')).random()
+    }.joinToString("")
 
     private fun setupViews(){
         binding.textDateTime.text = SimpleDateFormat("EEEE, dd MMMM yyyy HH:mm a", Locale.getDefault()).format(Date())

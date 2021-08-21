@@ -7,7 +7,7 @@ import com.donsidro.get.it.done.data.entities.Note
 @Dao
 interface NoteDao {
 
-    @Query("SELECT * FROM note_table ORDER BY position DESC")
+    @Query("SELECT * FROM note_table ORDER BY id DESC")
     fun getAllNotes(): LiveData<List<Note>>
 
     @Query("SELECT * FROM note_table where title like :filter ||'%' or LOWER(title) like LOWER(:filter) ||'%' or subTitle LIKE :filter ||'%'")

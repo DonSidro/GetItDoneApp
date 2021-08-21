@@ -13,6 +13,6 @@ class FirebaseSource @Inject constructor(
     fun signInWithGoogle(acct: GoogleSignInAccount) = firebaseAuth.signInWithCredential(
         GoogleAuthProvider.getCredential(acct.idToken,null))
 
-    fun fetchUser()=firestore.collection("users").get()
+    fun fetchUser() = firestore.collection("users").get()
 
 }

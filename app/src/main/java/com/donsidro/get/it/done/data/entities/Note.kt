@@ -17,7 +17,7 @@ data class Note(
     var imagePath: String? = "",
     var color: String? = null,
     var webLink: String? = "",
-    var position: Int? = id
+    var randomFirebaseID: String? = ""
 
 
 

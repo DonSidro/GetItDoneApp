@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "133466663932",
+    "project_id": "get-it-done-1fb6f",
+    "storage_bucket": "get-it-done-1fb6f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:133466663932:android:d2d1e71e312c2a9eafe079",
+        "android_client_info": {
+          "package_name": "com.donsidro.get.it.done"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "133466663932-sjjcno6tuva8ar970lkcl836na2e840u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaL1jG9r_s0eOP-5hLCVB3KxGd0VGyLn8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "133466663932-sjjcno6tuva8ar970lkcl836na2e840u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

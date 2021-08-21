@@ -78,4 +78,8 @@ class NotesViewModel @ViewModelInject constructor(
         return gMailUserLiveData
     }
 
+    fun saveNote(note: Note) {
+        repository.insertNote(note)
+    }
+
 }
