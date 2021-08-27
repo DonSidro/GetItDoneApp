@@ -6,9 +6,8 @@ import com.donsidro.get.it.done.data.local.NoteDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-class NoteRepository @Inject constructor(
+class NoteRepository (
     private val noteDao: NoteDao
 ) {
 
