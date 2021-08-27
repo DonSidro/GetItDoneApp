@@ -17,12 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
 import com.donsidro.get.it.done.data.entities.Note
 import com.donsidro.get.it.done.ui.notesview.NotesViewModel
@@ -127,20 +123,11 @@ fun NoteList(notes: LiveData<List<Note>>) {
 
 @Composable
 fun LiveDataLoadingComponent() {
-    // Column is a composable that places its children in a vertical sequence. You
-    // can think of it similar to a LinearLayout with the vertical orientation.
-    // In addition we also pass a few modifiers to it.
-    // You can think of Modifiers as implementations of the decorators pattern that are
-    // used to modify the composable that its applied to. In this example, we configure the
-    // Column composable to occupy the entire available width and height using
-    // Modifier.fillMaxSize().
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
           ) {
-        // A pre-defined composable that's capable of rendering a circular progress indicator. It
-        // honors the Material Design specification.
         CircularProgressIndicator(modifier = Modifier.wrapContentWidth(CenterHorizontally))
     }
 }
@@ -148,9 +135,6 @@ fun LiveDataLoadingComponent() {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LiveDataComponentList(noteList: List<Note>) {
-    // LazyColumn is a vertically scrolling list that only composes and lays out the currently
-    // visible items. This is very similar to what RecyclerView tries to do as it's more optimized
-    // than the VerticalScroller.
     LazyColumn {
         item {
             StaggeredVerticalGrid(
@@ -158,45 +142,7 @@ fun LiveDataComponentList(noteList: List<Note>) {
                 modifier = Modifier.padding(4.dp)
                                  ) {
                 noteList.forEach { note ->
-                    Card(
-                        shape = RoundedCornerShape(4.dp),
-                        backgroundColor = Color.White,
-                        modifier = Modifier
-                            .fillParentMaxWidth()
-                            .padding(8.dp),
-                        content = {
-                            // ListItem is a predefined composable that is a Material Design implementation of [list
-                            // items](https://material.io/components/lists). This component can be used to achieve the
-                            // list item templates existing in the spec
-                            ListItem(
-                                text = {
-                                    // The Text composable is pre-defined by the Compose UI library; you can use this
-                                    // composable to render text on the screen
-                                    Text(
-                                        text = note.title,
-                                        style = TextStyle(
-                                            fontFamily = FontFamily.Serif,
-                                            fontSize = 25.sp,
-                                            fontWeight = FontWeight.Bold
-                                                         )
-                                        )
-                                },
-                                secondaryText = {
-                                    Text(
-                                        text = note.body,
-                                        style = TextStyle(
-                                            fontFamily = FontFamily.Serif,
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Light,
-                                            color = Color.DarkGray
-                                                         )
-                                        )
-                                },
-                                icon = {
-                                }
-                                    )
-                        }
-                        )
+
                 }
             }
         }
